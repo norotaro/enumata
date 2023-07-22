@@ -11,11 +11,11 @@ use Norotaro\Enumaton\Contracts\StateDefinitions;
 use Norotaro\Enumaton\StateMachine;
 use ReflectionEnum;
 
-trait HasStateMachine
+trait HasStateMachines
 {
     protected array $stateMachines = [];
 
-    public static function bootHasStateMachine()
+    public static function bootHasStateMachines()
     {
         // define state machine getters
         $model = new static();

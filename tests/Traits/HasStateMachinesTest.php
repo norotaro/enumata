@@ -4,10 +4,10 @@ use Illuminate\Database\Eloquent\Model;
 use Norotaro\Enumaton\Contracts\StateMachine;
 use Norotaro\Enumaton\Tests\Examples\StateNullable;
 use Norotaro\Enumaton\Tests\Examples\StateValues;
-use Norotaro\Enumaton\Traits\HasStateMachine;
+use Norotaro\Enumaton\Traits\HasStateMachines;
 
 it('set default state values', function () {
-    $model = Mockery::mock(HasStateMachine::class);
+    $model = Mockery::mock(HasStateMachines::class);
     $model
         ->shouldReceive('getCasts')
         ->andReturn([
@@ -24,7 +24,7 @@ it('set default state values', function () {
 it('creates macros', function () {
     $model = new class() extends Model
     {
-        use HasStateMachine;
+        use HasStateMachines;
 
         protected $casts = [
             'status' => StateValues::class,

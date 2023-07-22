@@ -14,7 +14,7 @@ composer require norotaro/enumaton
 
 ## Usage
 
-Having a model with two status fields:
+Having a model with two state fields:
 
 ```php
 $order->status; // 'pending', 'approved', 'declined' or 'processed'
@@ -22,7 +22,8 @@ $order->status; // 'pending', 'approved', 'declined' or 'processed'
 $order->fulfillment; // null, 'pending', 'completed'
 ```
 
-We need to create a `enum` file with the State Definitions for each field. We can do that with the `make:model-state` command:
+We need to create an `enum` file with the State Definitions for each field.
+We can do this with the `make:model-state` command:
 
 ```bash
 php artisan make:model-state OrderStatus
@@ -31,10 +32,11 @@ php artisan make:model-state OrderStatus
 ```bash
 php artisan make:model-state OrderFulfillment --nullable
 ```
-> Because the `fulfillment` attribute can be null, we use the `--nullable` option to generate a more appropriate file.
+> Since the `fulfillment` attribute can be null, we use the `--nullable` option to generate a more appropriate file.
 
 ### OrderStatus definition
-The command will create a default file that we can addapt to fulfill our requirements:
+
+The above command will create a default file that we can adapt to meet our requirements:
 
 ```php
 namespace App\Models;
@@ -71,7 +73,7 @@ enum OrderStatus implements StateDefinitions
 
 ### OrderFulfillment definition
 
-And this is the state definitions for the `fulfillment` attribute that can be null:
+And these are the status definitions for the `fulfillment` attribute which can be null:
 
 ```php
 namespace App\Models;
@@ -110,14 +112,14 @@ enum OrderFulfillment implements StateDefinitions, Nullable
 
 ### Configuring the model
 
-In the model we need to register the `HasStateMachine` trait and then each `enum` to the `$casts` property:
+In the model we have to register the `HasStateMachines` trait and then each `enum` in the `$casts` property:
 
 ```php
-use Norotaro\Enumaton\Traits\HasStateMachine;
+use Norotaro\Enumaton\Traits\HasStateMachines;
 
 class Order extends Model
 {
-    use HasStateMachine;
+    use HasStateMachines;
 
     protected $casts = [
         'status' => OrderStatus::class,
@@ -130,7 +132,7 @@ That's it! Now we can transition the states using the State Machines.
 
 ## Access the current state
 
-If we access the attributes, Laravel will return the `enum` object with the current state:
+If we access the attributes, Eloquent will return the `enum` object with the current state:
 
 ```php
 $model = new Order;
