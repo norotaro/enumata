@@ -1,0 +1,33 @@
+<?php
+
+namespace {{ namespace }};
+
+use Norotaro\Enumaton\Contracts\Nullable;
+use Norotaro\Enumaton\Contracts\StateDefinitions;
+
+enum {{ class }} implements StateDefinitions, Nullable
+{
+    case Closed;
+    case Opened;
+
+    public function allowedTransitions(): array
+    {
+        return match ($this) {
+            self::Closed => [
+                self::Opened,
+            ]
+        };
+    }
+
+    public static function default(): ?self
+    {
+        return null;
+    }
+
+    public static function validInitialStates(): array
+    {
+        return [
+            self::Closed,
+        ];
+    }
+}
