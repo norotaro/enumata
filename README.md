@@ -122,7 +122,7 @@ class Order extends Model
     use HasStateMachines;
 
     protected $casts = [
-        'status' => OrderStatus::class,
+        'status'      => OrderStatus::class,
         'fulfillment' => OrderFulfillment::class,
     ];
 }
@@ -169,3 +169,92 @@ $model->status; // App\Model\OrderStatus{name: "Pending"}
 $model->status()->canBe(OrderStatus::Approved); // true
 $model->status()->canBe(OrderStatus::Processed); // false
 ```
+## Events
+
+This package adds two new events to those dispatched by Eloquent by default and can be used in the same way.
+
+> More information about Eloquent Events can be found in the [official documentation](https://laravel.com/docs/10.x/eloquent#events).
+
+- `transitioning:{attribute}`: This event is dispatched before saving the transition to a new state.
+- `transitioned:{attribute}`: This event is dispatched after saving the transition to a new state.
+
+In the `transitioning` event you can access the original and the new state in this way:
+
+```php
+$from = $order->getOriginal('fulfillment'); // App\Model\OrderFulfillment{name: "Pending"}
+$to   = $order->fulfillment; // App\Model\OrderFulfillment{name: "Complete"}
+```
+
+### Listening to events using `$dispatchesEvents`
+
+```php
+use App\Events\TransitionedOrderFulfillment;
+use App\Events\TransitioningOrderStatus;
+use Norotaro\Enumaton\Traits\HasStateMachines;
+
+class Order extends Model
+{
+    use HasStateMachines;
+
+    protected $casts = [
+        'status'      => OrderStatus::class,
+        'fulfillment' => OrderFulfillment::class,
+    ];
+
+    protected $dispatchesEvents = [
+        'transitioning:status'     => TransitioningOrderStatus::class,
+        'transitioned:fulfillment' => TransitionedOrderFulfillment::class,
+    ];
+}
+```
+
+### Listening to events using Closures
+
+The `transitioning($field, $callback)` and `transitioned($field, $callback)` methods help to register closures.
+
+> Note that the first parameter must be the name of the field we want to listen to.
+
+```php
+use App\Events\TransitionedOrderFulfillment;
+use App\Events\TransitioningOrderStatus;
+use Norotaro\Enumaton\Traits\HasStateMachines;
+
+class Order extends Model
+{
+    use HasStateMachines;
+
+    protected $casts = [
+        'status'      => OrderStatus::class,
+        'fulfillment' => OrderFulfillment::class,
+    ];
+
+    protected static function booted(): void
+    {
+        static::transitioning('fulfillment', function (Order $order) {
+            $from = $order->getOriginal('fulfillment');
+            $to   = $order->fulfillment;
+
+            \Log::debug('Transitioning fulfillment field', [
+                'from' => $from->name,
+                'to' => $to->name,
+            ]);
+        });
+
+        static::transitioned('status', function (Order $order) {
+            \Log::debug('Order status transitioned to ' . $order->status->name);
+        });
+    }
+}
+```
+
+## Testing
+
+To run the test suite:
+
+```php
+composer run test
+```
+
+## LICENSE
+
+The MIT License (MIT). Please see [License File](./LICENSE) for more information.
