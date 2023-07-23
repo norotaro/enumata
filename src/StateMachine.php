@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\InvalidCastException;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\Contracts\StateDefinitions;
+use Norotaro\Enumaton\Contracts\DefineStates;
 use Norotaro\Enumaton\Exceptions\TransitionNotAllowedException;
 use UnitEnum;
 
@@ -26,19 +26,19 @@ class StateMachine implements Contracts\StateMachine
     /**
      * Check if a transition is available
      */
-    public function canBe(StateDefinitions&UnitEnum $state): bool
+    public function canBe(DefineStates&UnitEnum $state): bool
     {
-        $validStates = $this->currentState()?->allowedTransitions();
+        $transitions = $this->currentState()?->transitions();
 
-        $validInitialStates = [];
+        $initialTransitions = [];
         if (in_array(Nullable::class, class_implements($state))) {
             /** @var Nullable */
             $nullableState = $state;
 
-            $validInitialStates = $nullableState->validInitialStates();
+            $initialTransitions = $nullableState->initialTransitions();
         }
 
-        return in_array($state, $validStates ?? $validInitialStates);
+        return in_array($state, $transitions ?? $initialTransitions);
     }
 
     /**
@@ -48,7 +48,7 @@ class StateMachine implements Contracts\StateMachine
      * @throws InvalidArgumentException
      * @throws InvalidCastException
      */
-    public function transitionTo(StateDefinitions&UnitEnum $state): void
+    public function transitionTo(DefineStates&UnitEnum $state): void
     {
         if ($state === $this->currentState()) {
             return;

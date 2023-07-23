@@ -7,20 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\QueuedClosure;
 use Illuminate\Support\Str;
 use Javoscript\MacroableModels\Facades\MacroableModels;
-use Norotaro\Enumaton\Contracts\StateDefinitions;
+use Norotaro\Enumaton\Contracts\DefineStates;
+use Norotaro\Enumaton\Contracts\Nullable;
 use Norotaro\Enumaton\StateMachine;
 use ReflectionEnum;
+use UnhandledMatchError;
 
 trait HasStateMachines
 {
+    public bool $defaultTransitionMethods = true;
+
     protected array $stateMachines = [];
 
     public static function bootHasStateMachines()
     {
-        // define state machine getters
         $model = new static();
         foreach ($model->getCasts() as $field => $castTo) {
-            if (self::isEnumAndImplementsState($castTo)) {
+            if (self::itDefineStates($castTo)) {
+
+                // state machine getter definition
                 $getStateMachine = function () use ($field) {
                     if (empty($this->stateMachines[$field])) {
                         $this->stateMachines[$field] = new StateMachine($this, $field);
@@ -29,12 +34,39 @@ trait HasStateMachines
                     return $this->stateMachines[$field];
                 };
 
-                $camelField = Str::of($field)->camel();
-
                 MacroableModels::addMacro(static::class, $field, $getStateMachine);
 
+                $camelField = Str::of($field)->camel();
                 if ($field !== $camelField) {
                     MacroableModels::addMacro(static::class, $camelField, $getStateMachine);
+                }
+
+                // create transition methods
+                if ($model->defaultTransitionMethods) {
+                    $states = $castTo::cases();
+
+                    foreach ($states as $state) {
+                        try {
+                            $transitions = $state->transitions();
+                        } catch (UnhandledMatchError $th) {
+                            $transitions = [];
+                        }
+
+                        foreach ($transitions as $transition => $nextState) {
+                            MacroableModels::addMacro(static::class, $transition, function () use ($field, $nextState) {
+                                $this->{$field}()->transitionTo($nextState);
+                            });
+                        }
+
+                        if (in_array(Nullable::class, class_implements($state))) {
+                            $initialTransitions = $state->initialTransitions();
+                            foreach ($initialTransitions as $transition => $nextState) {
+                                MacroableModels::addMacro(static::class, $transition, function () use ($field, $nextState) {
+                                    $this->{$field}()->transitionTo($nextState);
+                                });
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -55,7 +87,7 @@ trait HasStateMachines
     public function initStateMachines(): void
     {
         foreach ($this->getCasts() as $field => $castTo) {
-            if (self::isEnumAndImplementsState($castTo)) {
+            if (self::itDefineStates($castTo)) {
                 $this->{$field} = $this->{$field} ?? $castTo::default();
             }
         }
@@ -77,10 +109,10 @@ trait HasStateMachines
         static::registerModelEvent("transitioned:$field", $callback);
     }
 
-    private static function isEnumAndImplementsState(string $enumClass): bool
+    private static function itDefineStates(string $enumClass): bool
     {
         $enum = enum_exists($enumClass) ? new ReflectionEnum($enumClass) : null;
 
-        return $enum && $enum->implementsInterface(StateDefinitions::class);
+        return $enum && $enum->implementsInterface(DefineStates::class);
     }
 }

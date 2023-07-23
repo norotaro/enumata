@@ -2,22 +2,22 @@
 
 namespace Norotaro\Enumaton\Tests\Examples;
 
-use Norotaro\Enumaton\Contracts\StateDefinitions;
+use Norotaro\Enumaton\Contracts\DefineStates;
 
-enum StateValues implements StateDefinitions
+enum StateValues implements DefineStates
 {
     case Default;
     case Pending;
     case Finished;
 
-    public function allowedTransitions(): array
+    public function transitions(): array
     {
         return match ($this) {
             self::Default => [
-                self::Pending,
+                'pay' => self::Pending,
             ],
             self::Pending => [
-                self::Finished,
+                'end' => self::Finished,
             ]
         };
     }

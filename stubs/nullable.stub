@@ -3,19 +3,21 @@
 namespace {{ namespace }};
 
 use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\Contracts\StateDefinitions;
+use Norotaro\Enumaton\Contracts\DefineStates;
 
-enum {{ class }} implements StateDefinitions, Nullable
+enum {{ class }} implements DefineStates, Nullable
 {
-    case Closed;
-    case Opened;
+    case Pending;
+    case Approved;
+    case Rejected;
 
-    public function allowedTransitions(): array
+    public function transitions(): array
     {
         return match ($this) {
-            self::Closed => [
-                self::Opened,
-            ]
+            self::Pending => [
+                'approve' => self::Approved,
+                'reject' => self::Rejected,
+            ],
         };
     }
 
@@ -24,10 +26,10 @@ enum {{ class }} implements StateDefinitions, Nullable
         return null;
     }
 
-    public static function validInitialStates(): array
+    public static function initialTransitions(): array
     {
         return [
-            self::Closed,
+            'isPending' => self::Pending,
         ];
     }
 }

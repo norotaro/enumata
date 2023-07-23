@@ -4,5 +4,5 @@ namespace Norotaro\Enumaton\Contracts;
 
 interface Nullable
 {
-    public static function validInitialStates(): array;
+    public static function initialTransitions(): array;
 }

@@ -12,11 +12,11 @@ interface StateMachine
     /**
      * Return current state
      *
-     * @return null|StateDefinitions&UnitEnum
+     * @return null|DefineStates&UnitEnum
      */
     public function currentState();
 
-    public function canBe(StateDefinitions&UnitEnum $status): bool;
+    public function canBe(DefineStates&UnitEnum $status): bool;
 
-    public function transitionTo(StateDefinitions&UnitEnum $state): void;
+    public function transitionTo(DefineStates&UnitEnum $state): void;
 }

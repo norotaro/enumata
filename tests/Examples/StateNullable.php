@@ -3,23 +3,23 @@
 namespace Norotaro\Enumaton\Tests\Examples;
 
 use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\Contracts\StateDefinitions;
+use Norotaro\Enumaton\Contracts\DefineStates;
 
-enum StateNullable implements StateDefinitions, Nullable
+enum StateNullable implements DefineStates, Nullable
 {
     case Default;
     case Pending;
     case Finished;
 
-    public function allowedTransitions(): array
+    public function transitions(): array
     {
         return match ($this) {
             self::Default => [
-                self::Pending,
+                'isPending' => self::Pending,
             ],
             self::Pending => [
-                self::Finished,
-            ]
+                'finish' => self::Finished,
+            ],
         };
     }
 
@@ -28,10 +28,10 @@ enum StateNullable implements StateDefinitions, Nullable
         return null;
     }
 
-    public static function validInitialStates(): array
+    public static function initialTransitions(): array
     {
         return [
-            self::Default,
+            'initState' => self::Default,
         ];
     }
 }

@@ -2,24 +2,26 @@
 
 namespace {{ namespace }};
 
-use Norotaro\Enumaton\Contracts\StateDefinitions;
+use Norotaro\Enumaton\Contracts\DefineStates;
 
-enum {{ class }} implements StateDefinitions
+enum {{ class }} implements DefineStates
 {
-    case Closed;
-    case Opened;
+    case Pending;
+    case Approved;
+    case Rejected;
 
-    public function allowedTransitions(): array
+    public function transitions(): array
     {
         return match ($this) {
-            self::Closed => [
-                self::Opened,
-            ]
+            self::Pending => [
+                'approve' => self::Approved,
+                'reject' => self::Rejected,
+            ],
         };
     }
 
     public static function default(): self
     {
-        return self::Closed;
+        return self::Pending;
     }
 }

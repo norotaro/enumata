@@ -2,9 +2,9 @@
 
 namespace Norotaro\Enumaton\Contracts;
 
-interface StateDefinitions
+interface DefineStates
 {
-    public function allowedTransitions(): array;
+    public function transitions(): array;
 
     public static function default(): ?self;
 }

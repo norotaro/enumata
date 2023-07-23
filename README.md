@@ -42,25 +42,25 @@ The above command will create a default file that we can adapt to meet our requi
 namespace App\Models;
 
 use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\Contracts\StateDefinitions;
+use Norotaro\Enumaton\Contracts\DefineStates;
 
-enum OrderStatus implements StateDefinitions
+enum OrderStatus implements DefineStates
 {
     case Pending;
     case Approved;
     case Declined;
     case Processed;
 
-    public function allowedTransitions(): array
+    public function transitions(): array
     {
         return match ($this) {
             self::Pending => [
-                self::Approved,
-                self::Delined,
+                'approve' => self::Approved,
+                'decline' => self::Delined,
             ],
             self::Approved => [
-                self::Processed,
-            ]
+                'processOrder' => self::Processed,
+            ],
         };
     }
 
@@ -71,27 +71,31 @@ enum OrderStatus implements StateDefinitions
 }
 ```
 
+The `transitions()` method must return an array with `key=>value` where the key is the name of the transition and the value is the state to apply in that transition.
+
+> Note that, by default, methods will be created in the model for each transition. In the case of the example, the `approve()`, `decline()` and `processOrder()` methods will be created.
+
 ### OrderFulfillment definition
 
-And these are the status definitions for the `fulfillment` attribute which can be null:
+And these are the states definitions for the `fulfillment` attribute which can be null:
 
 ```php
 namespace App\Models;
 
 use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\Contracts\StateDefinitions;
+use Norotaro\Enumaton\Contracts\DefineStates;
 
-enum OrderFulfillment implements StateDefinitions, Nullable
+enum OrderFulfillment implements DefineStates, Nullable
 {
     case Pending;
     case Completed;
 
-    public function allowedTransitions(): array
+    public function transitions(): array
     {
         return match ($this) {
             self::Pending => [
-                self::Completed,
-            ]
+                'completeFulfillment' => self::Completed,
+            ],
         };
     }
 
@@ -100,15 +104,17 @@ enum OrderFulfillment implements StateDefinitions, Nullable
         return null;
     }
 
-    public static function validInitialStates(): array
+    public static function initialTransitions(): array
     {
         return [
-            self::Pending,
+            'initFulfillment' => self::Pending,
         ];
     }
 }
 ```
-> `validInitialStates()` returns the list of valid states when the field is null.
+The `initialTransitions()` method must return the list of available transitions when the field is null.
+
+> As with `transitions()`, by default methods will be created with the name of the keys returned by `initialTransitions()`.
 
 ### Configuring the model
 
@@ -128,11 +134,48 @@ class Order extends Model
 }
 ```
 
-That's it! Now we can transition the states using the State Machines.
+That's it! Now we can transition between the states.
+
+# Transitioning
+
+By default this package will create methods in the model for each transition returned by `transitions()` and `initialTransitions()` so, for this example, we will have these methods available:
+
+```php
+$model->approve(); // Change status to OrderStatus::Approved
+$model->decline(); // Change status to OrderStatus::Declined
+$model->processOrder(); // Change status to OrderStatus::Processed
+
+$model->initFulfillment(); // Change fulfillment to OrderFulfillment::Pending
+$model->completeFulfillment(); // Change fulfillment to OrderFulfillment::Completed
+```
+
+## Disable default transition methods
+
+You can disable the creation of transition methods by making the `$defaultTransitionMethods` attribute of the model `false`.
+
+Internally these methods use the `transitionTo($state)` method available in the `StateMachine` class, so you can implement your custom transition methods with it.
+
+```php
+class Order extends Model
+{
+    use HasStateMachines;
+
+    public bool $defaultTransitionMethods = false;
+
+    protected $casts = [
+        'status' => OrderStatus::class,
+    ];
+
+    public function approve(): void {
+        $this->status()->transitionTo(OrderStatus::Approved);
+        //...
+    }
+}
+```
 
 ## Access the current state
 
-If we access the attributes, Eloquent will return the `enum` object with the current state:
+If you access the attributes, Eloquent will return the `enum` object with the current state:
 
 ```php
 $model = new Order;
@@ -150,6 +193,8 @@ To access the State Machine we only need to add parentheses to the attribute nam
 $model->status(); // Norotaro\Enumaton\StateMachine
 $model->fulfillment(); // Norotaro\Enumaton\StateMachine
 ```
+
+> If the attribute uses underscore such as `my_attribute`, you can access the state machine using `my_attribute()` or `myAttribute()`.
 
 ## Using the State Machine
 
@@ -254,6 +299,10 @@ To run the test suite:
 ```php
 composer run test
 ```
+
+## Inspiration
+
+This package was inspired by [asantibanez/laravel-eloquent-state-machines](https://github.com/asantibanez/laravel-eloquent-state-machines).
 
 ## LICENSE
 
