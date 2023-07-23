@@ -1,6 +1,6 @@
 <?php
 
-namespace Norotaro\Enumaton\Contracts;
+namespace Norotaro\Enumata\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use UnitEnum;

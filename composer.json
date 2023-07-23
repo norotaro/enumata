@@ -1,16 +1,24 @@
 {
-  "name": "norotaro/enumaton",
+  "name": "norotaro/enumata",
   "description": "State machines for Eloquent models with Enums",
   "type": "library",
+  "keywords": [
+    "eloquent",
+    "laravel",
+    "state machines",
+    "finite-state machines",
+    "finite automaton",
+    "finite automata"
+  ],
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Norotaro\\Enumaton\\": "src/"
+      "Norotaro\\Enumata\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Norotaro\\Enumaton\\Tests\\": "tests"
+      "Norotaro\\Enumata\\Tests\\": "tests"
     }
   },
   "authors": [
@@ -46,7 +54,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Norotaro\\Enumaton\\Providers\\EnumatonServiceProvider"
+        "Norotaro\\Enumata\\Providers\\EnumataServiceProvider"
       ]
     }
   }

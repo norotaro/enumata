@@ -1,6 +1,6 @@
 <?php
 
-namespace Norotaro\Enumaton\Console\Commands;
+namespace Norotaro\Enumata\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 

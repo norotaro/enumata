@@ -1,4 +1,4 @@
-# Enumaton
+# Enumata
 
 State Machines for Eloquent models using Enums.
 
@@ -9,7 +9,7 @@ This package helps to implement State Machines to Eloquent models in an easy way
 ## Instalation
 
 ```bash
-composer require norotaro/enumaton
+composer require norotaro/enumata
 ```
 
 ## Usage
@@ -41,8 +41,8 @@ The above command will create a default file that we can adapt to meet our requi
 ```php
 namespace App\Models;
 
-use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\Contracts\DefineStates;
+use Norotaro\Enumata\Contracts\Nullable;
+use Norotaro\Enumata\Contracts\DefineStates;
 
 enum OrderStatus implements DefineStates
 {
@@ -82,8 +82,8 @@ And these are the states definitions for the `fulfillment` attribute which can b
 ```php
 namespace App\Models;
 
-use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\Contracts\DefineStates;
+use Norotaro\Enumata\Contracts\Nullable;
+use Norotaro\Enumata\Contracts\DefineStates;
 
 enum OrderFulfillment implements DefineStates, Nullable
 {
@@ -121,7 +121,7 @@ The `initialTransitions()` method must return the list of available transitions 
 In the model we have to register the `HasStateMachines` trait and then each `enum` in the `$casts` property:
 
 ```php
-use Norotaro\Enumaton\Traits\HasStateMachines;
+use Norotaro\Enumata\Traits\HasStateMachines;
 
 class Order extends Model
 {
@@ -136,7 +136,19 @@ class Order extends Model
 
 That's it! Now we can transition between the states.
 
-# Transitioning
+## Access the current state
+
+If you access the attributes, Eloquent will return the `enum` object with the current state:
+
+```php
+$model = new Order;
+$model->save();
+
+$model->status; // App\Model\OrderStatus{name: "Pending"}
+$model->fulfillment; // null
+```
+
+## Transitioning
 
 By default this package will create methods in the model for each transition returned by `transitions()` and `initialTransitions()` so, for this example, we will have these methods available:
 
@@ -149,7 +161,7 @@ $model->initFulfillment(); // Change fulfillment to OrderFulfillment::Pending
 $model->completeFulfillment(); // Change fulfillment to OrderFulfillment::Completed
 ```
 
-## Disable default transition methods
+### Disable default transition methods
 
 You can disable the creation of transition methods by making the `$defaultTransitionMethods` attribute of the model `false`.
 
@@ -173,32 +185,29 @@ class Order extends Model
 }
 ```
 
-## Access the current state
+### Transition not allowed exception
 
-If you access the attributes, Eloquent will return the `enum` object with the current state:
+If a transition is applied and the current state does not allow it, the `TransitionNotAllowedException` will be thrown.
 
 ```php
-$model = new Order;
-$model->save();
-
 $model->status; // App\Model\OrderStatus{name: "Pending"}
-$model->fulfillment; // null
+$model->processOrder(); // throws Norotaro\Enumata\Exceptions\TransitionNotAllowedException
 ```
 
-## Access the State Machine
+## The State Machine
 
 To access the State Machine we only need to add parentheses to the attribute names:
 
 ```php
-$model->status(); // Norotaro\Enumaton\StateMachine
-$model->fulfillment(); // Norotaro\Enumaton\StateMachine
+$model->status(); // Norotaro\Enumata\StateMachine
+$model->fulfillment(); // Norotaro\Enumata\StateMachine
 ```
 
 > If the attribute uses underscore such as `my_attribute`, you can access the state machine using `my_attribute()` or `myAttribute()`.
 
-## Using the State Machine
+### Using the State Machine
 
-### Transitioning
+#### Transitioning
 
 We can transition between states with the `transitionTo($state)` method:
 
@@ -206,7 +215,7 @@ We can transition between states with the `transitionTo($state)` method:
 $model->status()->transitionTo(OrderStatus::Approved);
 ```
 
-### Checking available transitions
+#### Checking available transitions
 
 ```php
 $model->status; // App\Model\OrderStatus{name: "Pending"}
@@ -235,7 +244,7 @@ $to   = $order->fulfillment; // App\Model\OrderFulfillment{name: "Complete"}
 ```php
 use App\Events\TransitionedOrderFulfillment;
 use App\Events\TransitioningOrderStatus;
-use Norotaro\Enumaton\Traits\HasStateMachines;
+use Norotaro\Enumata\Traits\HasStateMachines;
 
 class Order extends Model
 {
@@ -262,7 +271,7 @@ The `transitioning($field, $callback)` and `transitioned($field, $callback)` met
 ```php
 use App\Events\TransitionedOrderFulfillment;
 use App\Events\TransitioningOrderStatus;
-use Norotaro\Enumaton\Traits\HasStateMachines;
+use Norotaro\Enumata\Traits\HasStateMachines;
 
 class Order extends Model
 {

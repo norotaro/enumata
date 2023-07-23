@@ -1,8 +1,8 @@
 <?php
 
-namespace Norotaro\Enumaton\Tests\Examples;
+namespace Norotaro\Enumata\Tests\Examples;
 
-use Norotaro\Enumaton\Contracts\DefineStates;
+use Norotaro\Enumata\Contracts\DefineStates;
 
 enum StateValues implements DefineStates
 {

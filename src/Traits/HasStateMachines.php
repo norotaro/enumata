@@ -1,15 +1,15 @@
 <?php
 
-namespace Norotaro\Enumaton\Traits;
+namespace Norotaro\Enumata\Traits;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\QueuedClosure;
 use Illuminate\Support\Str;
 use Javoscript\MacroableModels\Facades\MacroableModels;
-use Norotaro\Enumaton\Contracts\DefineStates;
-use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\StateMachine;
+use Norotaro\Enumata\Contracts\DefineStates;
+use Norotaro\Enumata\Contracts\Nullable;
+use Norotaro\Enumata\StateMachine;
 use ReflectionEnum;
 use UnhandledMatchError;
 

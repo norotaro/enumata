@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\File;
-use Norotaro\Enumaton\Console\Commands\ModelStateMakeCommand;
+use Norotaro\Enumata\Console\Commands\ModelStateMakeCommand;
 
 it('can run the command successfully', function () {
     $this

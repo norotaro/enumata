@@ -1,9 +1,9 @@
 <?php
 
-namespace Norotaro\Enumaton\Tests\Examples;
+namespace Norotaro\Enumata\Tests\Examples;
 
-use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\Contracts\DefineStates;
+use Norotaro\Enumata\Contracts\Nullable;
+use Norotaro\Enumata\Contracts\DefineStates;
 
 enum StateNullable implements DefineStates, Nullable
 {

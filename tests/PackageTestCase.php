@@ -1,9 +1,9 @@
 <?php
 
-namespace Norotaro\Enumaton\Tests;
+namespace Norotaro\Enumata\Tests;
 
 use Javoscript\MacroableModels\MacroableModelsServiceProvider;
-use Norotaro\Enumaton\Providers\EnumatonServiceProvider;
+use Norotaro\Enumata\Providers\EnumataServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 class PackageTestCase extends TestCase
@@ -11,7 +11,7 @@ class PackageTestCase extends TestCase
     protected function getPackageProviders($app): array
     {
         return [
-            EnumatonServiceProvider::class,
+            EnumataServiceProvider::class,
             MacroableModelsServiceProvider::class,
         ];
     }

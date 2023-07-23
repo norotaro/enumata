@@ -1,6 +1,6 @@
 <?php
 
-namespace Norotaro\Enumaton\Exceptions;
+namespace Norotaro\Enumata\Exceptions;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;

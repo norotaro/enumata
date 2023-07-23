@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use Norotaro\Enumaton\Contracts\DefineStates;
+use Norotaro\Enumata\Contracts\DefineStates;
 
 enum {{ class }} implements DefineStates
 {

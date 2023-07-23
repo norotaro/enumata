@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Database\Eloquent\Model;
-use Norotaro\Enumaton\Exceptions\TransitionNotAllowedException;
-use Norotaro\Enumaton\StateMachine;
-use Norotaro\Enumaton\Tests\Examples\StateNullable;
-use Norotaro\Enumaton\Tests\Examples\StateValues;
+use Norotaro\Enumata\Exceptions\TransitionNotAllowedException;
+use Norotaro\Enumata\StateMachine;
+use Norotaro\Enumata\Tests\Examples\StateNullable;
+use Norotaro\Enumata\Tests\Examples\StateValues;
 
 beforeEach(function () {
     $this->model = Mockery::mock(Model::class);

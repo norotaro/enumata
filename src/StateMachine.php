@@ -1,13 +1,13 @@
 <?php
 
-namespace Norotaro\Enumaton;
+namespace Norotaro\Enumata;
 
 use Illuminate\Database\Eloquent\InvalidCastException;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
-use Norotaro\Enumaton\Contracts\Nullable;
-use Norotaro\Enumaton\Contracts\DefineStates;
-use Norotaro\Enumaton\Exceptions\TransitionNotAllowedException;
+use Norotaro\Enumata\Contracts\Nullable;
+use Norotaro\Enumata\Contracts\DefineStates;
+use Norotaro\Enumata\Exceptions\TransitionNotAllowedException;
 use UnitEnum;
 
 class StateMachine implements Contracts\StateMachine

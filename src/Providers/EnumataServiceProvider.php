@@ -1,11 +1,11 @@
 <?php
 
-namespace Norotaro\Enumaton\Providers;
+namespace Norotaro\Enumata\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Norotaro\Enumaton\Console\Commands\ModelStateMakeCommand;
+use Norotaro\Enumata\Console\Commands\ModelStateMakeCommand;
 
-final class EnumatonServiceProvider extends ServiceProvider
+final class EnumataServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {

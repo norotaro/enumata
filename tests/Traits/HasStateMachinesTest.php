@@ -2,10 +2,10 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Javoscript\MacroableModels\Facades\MacroableModels;
-use Norotaro\Enumaton\Contracts\StateMachine;
-use Norotaro\Enumaton\Tests\Examples\StateNullable;
-use Norotaro\Enumaton\Tests\Examples\StateValues;
-use Norotaro\Enumaton\Traits\HasStateMachines;
+use Norotaro\Enumata\Contracts\StateMachine;
+use Norotaro\Enumata\Tests\Examples\StateNullable;
+use Norotaro\Enumata\Tests\Examples\StateValues;
+use Norotaro\Enumata\Traits\HasStateMachines;
 
 it('set default state values', function () {
     $model = Mockery::mock(HasStateMachines::class);
