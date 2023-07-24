@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Norotaro\Enumata\Contracts\Nullable;
 use Norotaro\Enumata\Contracts\DefineStates;
 use Norotaro\Enumata\Exceptions\TransitionNotAllowedException;
+use UnhandledMatchError;
 use UnitEnum;
 
 class StateMachine implements Contracts\StateMachine
@@ -28,7 +29,11 @@ class StateMachine implements Contracts\StateMachine
      */
     public function canBe(DefineStates&UnitEnum $state): bool
     {
-        $transitions = $this->currentState()?->transitions();
+        try {
+            $transitions = $this->currentState()?->transitions();
+        } catch (UnhandledMatchError $th) {
+            $transitions = null;
+        }
 
         $initialTransitions = [];
         if (in_array(Nullable::class, class_implements($state))) {
