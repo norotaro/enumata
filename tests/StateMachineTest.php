@@ -1,56 +1,41 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
 use Norotaro\Enumata\Exceptions\TransitionNotAllowedException;
 use Norotaro\Enumata\StateMachine;
-use Norotaro\Enumata\Tests\Examples\StateNullable;
-use Norotaro\Enumata\Tests\Examples\StateValues;
+use Norotaro\Enumata\Tests\TestModels\Order;
+use Norotaro\Enumata\Tests\TestModels\OrderDeliveryStatus;
+use Norotaro\Enumata\Tests\TestModels\OrderStatus;
 
 beforeEach(function () {
-    $this->model = Mockery::mock(Model::class);
-    $this->stateMachine = new StateMachine($this->model, 'status');
+    $this->model = new Order();
+    $this->model->initEnumata();
 });
 
-describe('with Status', function () {
+describe('with not nullable status', function () {
     beforeEach(function () {
-        $this->defaultState = StateValues::default();
-        $this->model
-            ->shouldReceive('getAttribute')
-            ->with('status')
-            ->andReturn($this->defaultState);
+        $this->stateMachine = new StateMachine($this->model, 'status');
     });
 
     it('returns the right current state', function () {
         $currentState = $this->stateMachine->currentState();
 
-        expect($currentState)->toBe($this->defaultState);
+        expect($currentState)->toBe(OrderStatus::default());
     });
 
     it('returns true if a transition can be applied', function () {
-        $canBePending = $this->stateMachine->canBe(StateValues::Pending);
+        $canBePending = $this->stateMachine->canBe(OrderStatus::Pending);
 
         expect($canBePending)->toBe(true);
     });
 
     it('returns false if a transition cannot be applied', function () {
-        $canBeFinished = $this->stateMachine->canBe(StateValues::Finished);
+        $canBeFinished = $this->stateMachine->canBe(OrderStatus::Finished);
 
         expect($canBeFinished)->toBe(false);
     });
 
     it('allows transition to a correct state', function () {
-        $to = StateValues::Pending;
-        $this->model
-            ->shouldReceive('setAttribute')
-            ->once()
-            ->with('status', $to)
-            ->andSet('status', $to)
-            ->shouldReceive('fireTransitioningEvent')
-            ->once()
-            ->shouldReceive('fireTransitionedEvent')
-            ->once()
-            ->shouldReceive('save')
-            ->once();
+        $to = OrderStatus::Pending;
 
         $this->stateMachine->transitionTo($to);
 
@@ -60,20 +45,23 @@ describe('with Status', function () {
     });
 
     it('throws exception when transitioning to an incorrect state', function () {
-        $this->stateMachine->transitionTo(StateValues::Finished);
+        $this->stateMachine->transitionTo(OrderStatus::Finished);
     })->throws(TransitionNotAllowedException::class);
 
     it('does nothing when transitioning to the same state', function () {
-        $this->stateMachine->transitionTo($this->defaultState);
+        $this->stateMachine->transitionTo(OrderStatus::default());
     })->throwsNoExceptions();
+
+    it('throws exception when transitioning from a final state', function () {
+        $this->stateMachine->transitionTo(OrderStatus::Pending);
+        $this->stateMachine->transitionTo(OrderStatus::Finished); // final state
+        $this->stateMachine->transitionTo(OrderStatus::Pending);
+    })->throws(TransitionNotAllowedException::class);
 });
 
-describe('with NullableStatus', function () {
+describe('with nullable status', function () {
     beforeEach(function () {
-        $this->model
-            ->shouldReceive('getAttribute')
-            ->with('status')
-            ->andReturn(null);
+        $this->stateMachine = new StateMachine($this->model, 'delivery_status');
     });
 
     it('returns the right current state', function () {
@@ -83,30 +71,19 @@ describe('with NullableStatus', function () {
     });
 
     it('returns true if an initial transition can be applied', function () {
-        $canBePending = $this->stateMachine->canBe(StateNullable::Default);
+        $canBePending = $this->stateMachine->canBe(OrderDeliveryStatus::Default);
 
         expect($canBePending)->toBe(true);
     });
 
     it('returns false if an initial transition cannot be applied', function () {
-        $canBeFinished = $this->stateMachine->canBe(StateNullable::Pending);
+        $canBeFinished = $this->stateMachine->canBe(OrderDeliveryStatus::Pending);
 
         expect($canBeFinished)->toBe(false);
     });
 
     it('allows transition to a correct initial state', function () {
-        $to = StateNullable::Default;
-        $this->model
-            ->shouldReceive('setAttribute')
-            ->once()
-            ->with('status', $to)
-            ->andSet('status', $to)
-            ->shouldReceive('fireTransitioningEvent')
-            ->once()
-            ->shouldReceive('fireTransitionedEvent')
-            ->once()
-            ->shouldReceive('save')
-            ->once();
+        $to = OrderDeliveryStatus::Default;
 
         $this->stateMachine->transitionTo($to);
 
@@ -116,6 +93,6 @@ describe('with NullableStatus', function () {
     });
 
     it('throws exception when transitioning to an incorrect initial state', function () {
-        $this->stateMachine->transitionTo(StateValues::Finished);
+        $this->stateMachine->transitionTo(OrderStatus::Finished);
     })->throws(TransitionNotAllowedException::class);
 });

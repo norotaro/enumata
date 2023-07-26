@@ -1,48 +1,39 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
 use Javoscript\MacroableModels\Facades\MacroableModels;
 use Norotaro\Enumata\Contracts\StateMachine;
-use Norotaro\Enumata\Tests\Examples\StateNullable;
-use Norotaro\Enumata\Tests\Examples\StateValues;
-use Norotaro\Enumata\Traits\HasStateMachines;
+use Norotaro\Enumata\Exceptions\TransitionNotAllowedException;
+use Norotaro\Enumata\Tests\TestModels\Order;
+use Norotaro\Enumata\Tests\TestModels\OrderStatus;
 
-it('set default state values', function () {
-    $model = Mockery::mock(HasStateMachines::class);
-    $model
-        ->shouldReceive('getCasts')
-        ->andReturn([
-            'status' => StateValues::class,
-            'nullable_status' => StateNullable::class,
-        ]);
-
-    $model->initStateMachines();
-
-    expect($model->status)->toBe(StateValues::Default);
-    expect($model->nullable_status)->toBe(null);
+beforeEach(function () {
+    $this->model = new Order();
 });
 
-describe('macros creation', function () {
-    beforeEach(function () {
-        $this->model = new class() extends Model
-        {
-            use HasStateMachines;
+it('set default state values', function () {
+    $this->model->initEnumata(true);
 
-            protected $casts = [
-                'status' => StateValues::class,
-                'nullable_status' => StateNullable::class,
-            ];
-        };
-    });
+    expect($this->model->status)->toBe(OrderStatus::Default);
+    expect($this->model->delivery_status)->toBe(null);
+});
+
+it('validate direct changes without transitions', function () {
+    $this->model->save();
+
+    $this->model->status = OrderStatus::Finished;
+    $this->model->save();
+})->throws(TransitionNotAllowedException::class);
+
+describe('macros creation', function () {
 
     it('creates state machine getters', function () {
         expect(MacroableModels::modelHasMacro($this->model::class, 'status'))->toBe(true);
-        expect(MacroableModels::modelHasMacro($this->model::class, 'nullable_status'))->toBe(true);
-        expect(MacroableModels::modelHasMacro($this->model::class, 'nullableStatus'))->toBe(true);
+        expect(MacroableModels::modelHasMacro($this->model::class, 'delivery_status'))->toBe(true);
+        expect(MacroableModels::modelHasMacro($this->model::class, 'deliveryStatus'))->toBe(true);
 
         expect($this->model->status())->toBeInstanceOf(StateMachine::class);
-        expect($this->model->nullable_status())->toBeInstanceOf(StateMachine::class);
-        expect($this->model->nullableStatus())->toBeInstanceOf(StateMachine::class);
+        expect($this->model->delivery_status())->toBeInstanceOf(StateMachine::class);
+        expect($this->model->deliveryStatus())->toBeInstanceOf(StateMachine::class);
     });
 
     it('creates transition methods', function () {

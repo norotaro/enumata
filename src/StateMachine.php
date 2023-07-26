@@ -35,15 +35,14 @@ class StateMachine implements Contracts\StateMachine
             $transitions = null;
         }
 
-        $initialTransitions = [];
-        if (in_array(Nullable::class, class_implements($state))) {
+        if (!$transitions && in_array(Nullable::class, class_implements($state))) {
             /** @var Nullable */
             $nullableState = $state;
 
-            $initialTransitions = $nullableState->initialTransitions();
+            $transitions = $nullableState->initialTransitions();
         }
 
-        return in_array($state, $transitions ?? $initialTransitions);
+        return in_array($state, $transitions ?? []);
     }
 
     /**
@@ -59,6 +58,7 @@ class StateMachine implements Contracts\StateMachine
             return;
         }
 
+        /** TODO: unify the validation logic of transitions */
         if (!$this->canBe($state)) {
             throw new TransitionNotAllowedException(
                 $this->currentState(),
@@ -74,5 +74,10 @@ class StateMachine implements Contracts\StateMachine
         $this->model->save();
 
         $this->model->fireTransitionedEvent($this->field);
+    }
+
+    public function getField(): string
+    {
+        return $this->field;
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Javoscript\MacroableModels\Facades\MacroableModels;
 use Norotaro\Enumata\Contracts\DefineStates;
 use Norotaro\Enumata\Contracts\Nullable;
+use Norotaro\Enumata\Exceptions\TransitionNotAllowedException;
 use Norotaro\Enumata\StateMachine;
 use ReflectionEnum;
 use UnhandledMatchError;
@@ -27,9 +28,7 @@ trait HasStateMachines
 
                 // state machine getter definition
                 $getStateMachine = function () use ($field) {
-                    if (empty($this->stateMachines[$field])) {
-                        $this->stateMachines[$field] = new StateMachine($this, $field);
-                    }
+                    $this->initStateMachineFor($field);
 
                     return $this->stateMachines[$field];
                 };
@@ -80,17 +79,52 @@ trait HasStateMachines
         });
 
         self::creating(function (Model $model) {
-            $model->initStateMachines();
+            $model->initEnumata(true);
+        });
+
+        self::updating(function (Model $model) {
+            $model->initEnumata();
+
+            /** @var StateMachine */
+            foreach ($model->getStateMachines() as $stateMachine) {
+                $field = $stateMachine->getField();
+
+                if ($model->isDirty($field)) {
+                    $from = $model->getOriginal($field);
+                    $to   = $model->{$field};
+
+                    /** TODO: unify the validation logic of transitions */
+                    $transitions = $from?->transitions();
+                    if (!$transitions && in_array(Nullable::class, class_implements($to))) {
+                        /** @var Nullable */
+                        $nullableState = $to;
+
+                        $transitions = $nullableState->initialTransitions();
+                    }
+
+                    if (!in_array($to, $transitions ?? [])) {
+                        throw new TransitionNotAllowedException($from, $to, $model);
+                    }
+                }
+            }
         });
     }
 
-    public function initStateMachines(): void
+    public function initEnumata(bool $setDefaultValues = true): void
     {
         foreach ($this->getCasts() as $field => $castTo) {
             if (self::itDefineStates($castTo)) {
-                $this->{$field} = $this->{$field} ?? $castTo::default();
+                $this->initStateMachineFor($field);
+                if ($setDefaultValues) {
+                    $this->{$field} = $this->{$field} ?? $castTo::default();
+                }
             }
         }
+    }
+
+    public function getStateMachines(): array
+    {
+        return $this->stateMachines;
     }
 
     /**
@@ -114,5 +148,12 @@ trait HasStateMachines
         $enum = enum_exists($enumClass) ? new ReflectionEnum($enumClass) : null;
 
         return $enum && $enum->implementsInterface(DefineStates::class);
+    }
+
+    private function initStateMachineFor(string $field): void
+    {
+        if (empty($this->stateMachines[$field])) {
+            $this->stateMachines[$field] = new StateMachine($this, $field);
+        }
     }
 }
