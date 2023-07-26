@@ -8,7 +8,7 @@ use Norotaro\Enumata\Tests\TestModels\OrderStatus;
 
 beforeEach(function () {
     $this->model = new Order();
-    $this->model->initStateMachines();
+    $this->model->initEnumata();
 });
 
 describe('with not nullable status', function () {

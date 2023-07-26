@@ -79,11 +79,11 @@ trait HasStateMachines
         });
 
         self::creating(function (Model $model) {
-            $model->initStateMachines();
+            $model->initEnumata(true);
         });
 
         self::updating(function (Model $model) {
-            $model->initStateMachines();
+            $model->initEnumata();
 
             /** @var StateMachine */
             foreach ($model->getStateMachines() as $stateMachine) {
@@ -110,12 +110,12 @@ trait HasStateMachines
         });
     }
 
-    public function initStateMachines(): void
+    public function initEnumata(bool $setDefaultValues = true): void
     {
         foreach ($this->getCasts() as $field => $castTo) {
             if (self::itDefineStates($castTo)) {
                 $this->initStateMachineFor($field);
-                $this->{$field} = $this->{$field} ?? $castTo::default();
+                if ($setDefaultValues) $this->{$field} = $this->{$field} ?? $castTo::default();
             }
         }
     }

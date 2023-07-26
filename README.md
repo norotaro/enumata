@@ -23,6 +23,7 @@ $order->fulfillment; // null, 'pending', 'completed'
 ```
 
 We need to create an `enum` file with the State Definitions for each field.
+The file to define the `status` field will be called `OrderStatus` and the file to define the `fulfillment` field will be called `OrderFulfillment`.
 We can do this with the `make:model-state` command:
 
 ```bash
