@@ -1,5 +1,10 @@
 # Enumata
 
+[![Latest Version](https://img.shields.io/packagist/v/norotaro/enumata.svg?label=release)](https://packagist.org/packages/norotaro/enumata)
+[![Tests](https://github.com/norotaro/enumata/actions/workflows/test.yaml/badge.svg)](https://github.com/norotaro/enumata/actions/workflows/test.yaml)
+[![Packagist PHP Version](https://img.shields.io/packagist/dependency-v/norotaro/enumata/php?logo=php&color=%23AEB2D5)](https://php.net)
+[![Packagist PHP Version](https://img.shields.io/packagist/dependency-v/norotaro/enumata/illuminate%2Fsupport?logo=laravel&label=Laravel&color=%23F05340)](https://laravel.com)
+
 State Machines for Eloquent models using Enums.
 
 ## Description
