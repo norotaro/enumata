@@ -115,7 +115,9 @@ trait HasStateMachines
         foreach ($this->getCasts() as $field => $castTo) {
             if (self::itDefineStates($castTo)) {
                 $this->initStateMachineFor($field);
-                if ($setDefaultValues) $this->{$field} = $this->{$field} ?? $castTo::default();
+                if ($setDefaultValues) {
+                    $this->{$field} = $this->{$field} ?? $castTo::default();
+                }
             }
         }
     }
