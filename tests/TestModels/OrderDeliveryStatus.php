@@ -1,11 +1,11 @@
 <?php
 
-namespace Norotaro\Enumata\Tests\Examples;
+namespace Norotaro\Enumata\Tests\TestModels;
 
 use Norotaro\Enumata\Contracts\Nullable;
 use Norotaro\Enumata\Contracts\DefineStates;
 
-enum StateNullable implements DefineStates, Nullable
+enum OrderDeliveryStatus implements DefineStates, Nullable
 {
     case Default;
     case Pending;

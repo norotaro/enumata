@@ -1,10 +1,10 @@
 <?php
 
-namespace Norotaro\Enumata\Tests\Examples;
+namespace Norotaro\Enumata\Tests\TestModels;
 
 use Norotaro\Enumata\Contracts\DefineStates;
 
-enum StateValues implements DefineStates
+enum OrderStatus implements DefineStates
 {
     case Default;
     case Pending;
