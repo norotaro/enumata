@@ -11,7 +11,11 @@ State Machines for Eloquent models using Enums.
 
 This package helps to implement State Machines to Eloquent models in an easy way using Enum files to represent all possible states and also to configure transitions.
 
-## Instalation
+## Live demo
+
+You can check the [norotaro/enumata-demo](https://github.com/norotaro/enumata-demo) repository or go to the live version of the demo in this [PHP Sandbox](https://phpsandbox.io/e/x/ultlf?layout=EditorPreview&defaultPath=%2F&theme=dark&showExplorer=no&openedFiles=#app/Models/OrderStatus.php).
+
+## Installation
 
 ```bash
 composer require norotaro/enumata
