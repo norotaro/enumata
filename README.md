@@ -204,6 +204,20 @@ $model->status; // App\Model\OrderStatus{name: "Pending"}
 $model->processOrder(); // throws Norotaro\Enumata\Exceptions\TransitionNotAllowedException
 ```
 
+### Force transitions
+
+All the methods of transitions created by the trait and also the `transitionTo()` method have the `force` parameter which, when true, the transition is applied without checking the defined rules.
+
+```php
+$model->status; // App\Model\OrderStatus{name: "Pending"}
+
+$model->processOrder(force: true); // this will apply the transition and will not throw the exception
+
+$model->status; // App\Model\OrderStatus{name: "Processed"}
+
+$model->status()->transitionTo(OrderStatus::Pending, force:true); // will apply the transition without errors
+```
+
 ## The State Machine
 
 To access the State Machine we only need to add parentheses to the attribute names:
