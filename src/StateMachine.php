@@ -52,14 +52,14 @@ class StateMachine implements Contracts\StateMachine
      * @throws InvalidArgumentException
      * @throws InvalidCastException
      */
-    public function transitionTo(DefineStates&UnitEnum $state): void
+    public function transitionTo(DefineStates&UnitEnum $state, bool $force = false): void
     {
         if ($state === $this->currentState()) {
             return;
         }
 
         /** TODO: unify the validation logic of transitions */
-        if (!$this->canBe($state)) {
+        if (!$force && !$this->canBe($state)) {
             throw new TransitionNotAllowedException(
                 $this->currentState(),
                 $state,

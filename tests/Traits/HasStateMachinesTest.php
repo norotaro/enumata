@@ -44,4 +44,10 @@ describe('macros creation', function () {
         expect(MacroableModels::modelHasMacro($this->model::class, 'isPending'))->toBe(true);
         expect(MacroableModels::modelHasMacro($this->model::class, 'finish'))->toBe(true);
     });
+
+    it('creates transition methods that allows forced transitions', function () {
+        $this->model->end(force: true);
+
+        expect($this->model->status)->toBe(OrderStatus::Finished);
+    });
 });

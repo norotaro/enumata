@@ -52,16 +52,16 @@ trait HasStateMachines
                         }
 
                         foreach ($transitions as $transition => $nextState) {
-                            MacroableModels::addMacro(static::class, $transition, function () use ($field, $nextState) {
-                                $this->{$field}()->transitionTo($nextState);
+                            MacroableModels::addMacro(static::class, $transition, function (bool $force = false) use ($field, $nextState) {
+                                $this->{$field}()->transitionTo($nextState, force: $force);
                             });
                         }
 
                         if (in_array(Nullable::class, class_implements($state))) {
                             $initialTransitions = $state->initialTransitions();
                             foreach ($initialTransitions as $transition => $nextState) {
-                                MacroableModels::addMacro(static::class, $transition, function () use ($field, $nextState) {
-                                    $this->{$field}()->transitionTo($nextState);
+                                MacroableModels::addMacro(static::class, $transition, function (bool $force = false) use ($field, $nextState) {
+                                    $this->{$field}()->transitionTo($nextState, force: $force);
                                 });
                             }
                         }

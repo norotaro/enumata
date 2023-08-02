@@ -18,5 +18,5 @@ interface StateMachine
 
     public function canBe(DefineStates&UnitEnum $status): bool;
 
-    public function transitionTo(DefineStates&UnitEnum $state): void;
+    public function transitionTo(DefineStates&UnitEnum $state, bool $force = false): void;
 }
