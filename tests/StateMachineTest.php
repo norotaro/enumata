@@ -57,6 +57,12 @@ describe('with not nullable status', function () {
         $this->stateMachine->transitionTo(OrderStatus::Finished); // final state
         $this->stateMachine->transitionTo(OrderStatus::Pending);
     })->throws(TransitionNotAllowedException::class);
+
+    it('allows forced transitions', function () {
+        $this->stateMachine->transitionTo(OrderStatus::Finished, force: true);
+
+        expect($this->stateMachine->currentState())->toBe(OrderStatus::Finished);
+    });
 });
 
 describe('with nullable status', function () {
