@@ -2,6 +2,8 @@
 
 namespace Norotaro\Enumata\Traits;
 
+use App\Events\TransitionedState;
+use App\Events\TransitioningState;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\QueuedClosure;
@@ -71,11 +73,19 @@ trait HasStateMachines
         }
 
         MacroableModels::addMacro(static::class, 'fireTransitioningEvent', function ($field) {
+            // fire Eloquent event
             $this->fireModelEvent("transitioning:$field", false);
+
+            // fire package event
+            TransitioningState::dispatch($this, $field);
         });
 
         MacroableModels::addMacro(static::class, 'fireTransitionedEvent', function ($field) {
+            // fire Eloquent event
             $this->fireModelEvent("transitioned:$field", false);
+
+            // fire package event
+            TransitionedState::dispatch($this, $field);
         });
 
         self::creating(function (Model $model) {
