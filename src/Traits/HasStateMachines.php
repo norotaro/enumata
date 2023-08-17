@@ -9,8 +9,6 @@ use Illuminate\Support\Str;
 use Javoscript\MacroableModels\Facades\MacroableModels;
 use Norotaro\Enumata\Contracts\DefineStates;
 use Norotaro\Enumata\Contracts\Nullable;
-use Norotaro\Enumata\Events\TransitionedState;
-use Norotaro\Enumata\Events\TransitioningState;
 use Norotaro\Enumata\Exceptions\TransitionNotAllowedException;
 use Norotaro\Enumata\StateMachine;
 use ReflectionEnum;
@@ -75,17 +73,11 @@ trait HasStateMachines
         MacroableModels::addMacro(static::class, 'fireTransitioningEvent', function ($field) {
             // fire Eloquent event
             $this->fireModelEvent("transitioning:$field", false);
-
-            // fire package event
-            // TransitioningState::dispatch($this, $field);
         });
 
         MacroableModels::addMacro(static::class, 'fireTransitionedEvent', function ($field, $from) {
             // fire Eloquent event
             $this->fireModelEvent("transitioned:$field", false);
-
-            // fire package event
-            // TransitionedState::dispatch($this, $field, $from);
         });
 
         self::creating(function (Model $model) {
