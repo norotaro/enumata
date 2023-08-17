@@ -52,28 +52,28 @@ class StateMachine implements Contracts\StateMachine
      * @throws InvalidArgumentException
      * @throws InvalidCastException
      */
-    public function transitionTo(DefineStates&UnitEnum $state, bool $force = false): void
+    public function transitionTo(DefineStates&UnitEnum $to, bool $force = false): void
     {
-        if ($state === $this->currentState()) {
+        if ($to === $this->currentState()) {
             return;
         }
 
         /** TODO: unify the validation logic of transitions */
-        if (!$force && !$this->canBe($state)) {
+        if (!$force && !$this->canBe($to)) {
             throw new TransitionNotAllowedException(
                 $this->currentState(),
-                $state,
+                $to,
                 $this->model
             );
         }
 
-        $this->model->{$this->field} = $state;
+        $this->model->{$this->field} = $to;
 
         $this->model->fireTransitioningEvent($this->field);
 
         $this->model->save();
 
-        $this->model->fireTransitionedEvent($this->field);
+        $this->model->fireTransitionedEvent($this->field, $to);
     }
 
     public function getField(): string

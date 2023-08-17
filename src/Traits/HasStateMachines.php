@@ -80,12 +80,12 @@ trait HasStateMachines
             TransitioningState::dispatch($this, $field);
         });
 
-        MacroableModels::addMacro(static::class, 'fireTransitionedEvent', function ($field) {
+        MacroableModels::addMacro(static::class, 'fireTransitionedEvent', function ($field, $from) {
             // fire Eloquent event
             $this->fireModelEvent("transitioned:$field", false);
 
             // fire package event
-            TransitionedState::dispatch($this, $field);
+            TransitionedState::dispatch($this, $field, $from);
         });
 
         self::creating(function (Model $model) {
