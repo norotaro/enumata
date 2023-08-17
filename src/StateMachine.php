@@ -13,6 +13,8 @@ use UnitEnum;
 
 class StateMachine implements Contracts\StateMachine
 {
+    protected bool $isTransitioning = false;
+
     public function __construct(
         protected Model $model,
         protected string $field
@@ -67,6 +69,8 @@ class StateMachine implements Contracts\StateMachine
             );
         }
 
+        $this->isTransitioning = true;
+
         $this->model->{$this->field} = $to;
 
         $this->model->fireTransitioningEvent($this->field);
@@ -74,10 +78,17 @@ class StateMachine implements Contracts\StateMachine
         $this->model->save();
 
         $this->model->fireTransitionedEvent($this->field, $to);
+
+        $this->isTransitioning = false;
     }
 
     public function getField(): string
     {
         return $this->field;
+    }
+
+    public function isTransitioning(): bool
+    {
+        return $this->isTransitioning;
     }
 }

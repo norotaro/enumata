@@ -45,7 +45,15 @@ describe('macros creation', function () {
         expect(MacroableModels::modelHasMacro($this->model::class, 'finish'))->toBe(true);
     });
 
+    it('change status with transition methods', function () {
+        $this->model->save();
+        $this->model->pay();
+
+        expect($this->model->status)->toBe(OrderStatus::Pending);
+    });
+
     it('creates transition methods that allows forced transitions', function () {
+        $this->model->save();
         $this->model->end(force: true);
 
         expect($this->model->status)->toBe(OrderStatus::Finished);

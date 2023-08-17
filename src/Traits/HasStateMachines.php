@@ -77,7 +77,7 @@ trait HasStateMachines
             $this->fireModelEvent("transitioning:$field", false);
 
             // fire package event
-            TransitioningState::dispatch($this, $field);
+            // TransitioningState::dispatch($this, $field);
         });
 
         MacroableModels::addMacro(static::class, 'fireTransitionedEvent', function ($field, $from) {
@@ -85,7 +85,7 @@ trait HasStateMachines
             $this->fireModelEvent("transitioned:$field", false);
 
             // fire package event
-            TransitionedState::dispatch($this, $field, $from);
+            // TransitionedState::dispatch($this, $field, $from);
         });
 
         self::creating(function (Model $model) {
@@ -99,7 +99,7 @@ trait HasStateMachines
             foreach ($model->getStateMachines() as $stateMachine) {
                 $field = $stateMachine->getField();
 
-                if ($model->isDirty($field)) {
+                if ($model->isDirty($field) && !$stateMachine->isTransitioning()) {
                     $from = $model->getOriginal($field);
                     $to   = $model->{$field};
 
