@@ -25,10 +25,10 @@ State Machines for Eloquent models using Enums.
   - [Register the State Definition file](#register-the-state-definition-file)
 - [The State Machine](#the-state-machine)
   - [Using the State Machine](#using-the-state-machine)
-    - [Transitioning](#transitioning)
-    - [Checking available transitions](#checking-available-transitions)
+      - [Transitioning](#transitioning-1)
+      - [Checking available transitions](#checking-available-transitions)
 - [Events](#events)
-  - [Listening to events using `$dispatchesEvents`](#listening-to-events-using-dispatchesEvents)
+  - [Listening to events using `$dispatchesEvents`](#listening-to-events-using-dispatchesevents)
   - [Listening to events using Closures](#listening-to-events-using-closures)
 - [Testing](#testing)
 - [Inspiration](#inspiration)
@@ -347,8 +347,6 @@ The `transitioning($field, $callback)` and `transitioned($field, $callback)` met
 > Note that the first parameter must be the name of the field we want to listen to.
 
 ```php
-use App\Events\TransitionedOrderFulfillment;
-use App\Events\TransitioningOrderStatus;
 use Norotaro\Enumata\Traits\HasStateMachines;
 
 class Order extends Model
