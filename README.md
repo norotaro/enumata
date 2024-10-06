@@ -9,30 +9,30 @@ State Machines for Eloquent models using Enums.
 
 ## Table of Contents
 
-- [Description](#description)
-- [Live demo](#live-demo)
-- [Installation](#installation)
-- [Basic usage](#basic-usage)
-  - [The State Definition file - enum file](#the-state-definition-file---enum-file)
-  - [Configuring the model](#configuring-the-model)
-- [Access the current state](#access-the-current-state)
-- [Transitioning](#transitioning)
-  - [Disable default transition methods](#disable-default-transition-methods)
-  - [Transition not allowed exception](#transition-not-allowed-exception)
-  - [Force transitions](#force-transitions)
-- [Nullable States](#nullable-states)
-  - [Create a State Definition file](#create-a-state-definition-file)
-  - [Register the State Definition file](#register-the-state-definition-file)
-- [The State Machine](#the-state-machine)
-  - [Using the State Machine](#using-the-state-machine)
-      - [Transitioning](#transitioning-1)
-      - [Checking available transitions](#checking-available-transitions)
-- [Events](#events)
-  - [Listening to events using `$dispatchesEvents`](#listening-to-events-using-dispatchesevents)
-  - [Listening to events using Closures](#listening-to-events-using-closures)
-- [Testing](#testing)
-- [Inspiration](#inspiration)
-- [LICENSE](#license)
+-   [Description](#description)
+-   [Live demo](#live-demo)
+-   [Installation](#installation)
+-   [Basic usage](#basic-usage)
+    -   [The State Definition file - enum file](#the-state-definition-file---enum-file)
+    -   [Configuring the model](#configuring-the-model)
+-   [Access the current state](#access-the-current-state)
+-   [Transitioning](#transitioning)
+    -   [Disable default transition methods](#disable-default-transition-methods)
+    -   [Transition not allowed exception](#transition-not-allowed-exception)
+    -   [Force transitions](#force-transitions)
+-   [Nullable States](#nullable-states)
+    -   [Create a State Definition file](#create-a-state-definition-file)
+    -   [Register the State Definition file](#register-the-state-definition-file)
+-   [The State Machine](#the-state-machine)
+    -   [Using the State Machine](#using-the-state-machine)
+        -   [Transitioning](#transitioning-1)
+        -   [Checking available transitions](#checking-available-transitions)
+-   [Events](#events)
+    -   [Listening to events using `$dispatchesEvents`](#listening-to-events-using-dispatchesevents)
+    -   [Listening to events using Closures](#listening-to-events-using-closures)
+-   [Testing](#testing)
+-   [Inspiration](#inspiration)
+-   [LICENSE](#license)
 
 ## Description
 
@@ -108,14 +108,15 @@ The `transitions()` method must return an array with `key=>value` where the key 
 
 ### Configuring the model
 
-In the model we have to register the `HasStateMachines` trait and then the `enum` file in the `$casts` property:
+In the model we have to implement the contract `HasStateMachine` and register the `EloquentHasStateMachines` trait and then the `enum` file in the `$casts` property:
 
 ```php
-use Norotaro\Enumata\Traits\HasStateMachines;
+use Norotaro\Enumata\Contracts\HasStateMachine;
+use Norotaro\Enumata\Traits\EloquentHasStateMachines;
 
-class Order extends Model
+class Order extends Model implements HasStateMachine
 {
-    use HasStateMachines;
+    use EloquentHasStateMachines;
 
     protected $casts = [
         'status' => OrderStatus::class,
@@ -154,9 +155,12 @@ You can disable the creation of transition methods by making the `$defaultTransi
 Internally these methods use the `transitionTo($state)` method available in the `StateMachine` class, so you can implement your custom transition methods with it.
 
 ```php
-class Order extends Model
+use Norotaro\Enumata\Contracts\HasStateMachine;
+use Norotaro\Enumata\Traits\EloquentHasStateMachines;
+
+class Order extends Model implements HasStateMachine
 {
-    use HasStateMachines;
+    use EloquentHasStateMachines;
 
     // disable the creation of transition methods
     public bool $defaultTransitionMethods = false;
@@ -259,11 +263,12 @@ The `initialTransitions()` method must return the list of available transitions 
 As we previously did with the `status` definition, we need to register the file in the `$casts` property:
 
 ```php
-use Norotaro\Enumata\Traits\HasStateMachines;
+use Norotaro\Enumata\Contracts\HasStateMachine;
+use Norotaro\Enumata\Traits\EloquentHasStateMachines;
 
-class Order extends Model
+class Order extends Model implements HasStateMachine
 {
-    use HasStateMachines;
+    use EloquentHasStateMachines;
 
     protected $casts = [
         'status'      => OrderStatus::class,
@@ -307,8 +312,8 @@ This package adds two new events to those dispatched by Eloquent by default and 
 
 > More information about Eloquent Events can be found in the [official documentation](https://laravel.com/docs/10.x/eloquent#events).
 
-- `transitioning:{attribute}`: This event is dispatched before saving the transition to a new state.
-- `transitioned:{attribute}`: This event is dispatched after saving the transition to a new state.
+-   `transitioning:{attribute}`: This event is dispatched before saving the transition to a new state.
+-   `transitioned:{attribute}`: This event is dispatched after saving the transition to a new state.
 
 In the `transitioning` event you can access the original and the new state in this way:
 
@@ -347,11 +352,12 @@ The `transitioning($field, $callback)` and `transitioned($field, $callback)` met
 > Note that the first parameter must be the name of the field we want to listen to.
 
 ```php
-use Norotaro\Enumata\Traits\HasStateMachines;
+use Norotaro\Enumata\Contracts\HasStateMachine;
+use Norotaro\Enumata\Traits\EloquentHasStateMachines;
 
-class Order extends Model
+class Order extends Model implements HasStateMachine
 {
-    use HasStateMachines;
+    use EloquentHasStateMachines;
 
     protected $casts = [
         'status'      => OrderStatus::class,
