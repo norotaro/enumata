@@ -14,7 +14,7 @@ it('set default state values', function () {
     $this->model->initEnumata(true);
 
     expect($this->model->status)->toBe(OrderStatus::Default);
-    expect($this->model->delivery_status)->toBe(null);
+    expect($this->model->deliveryStatus)->toBe(null);
 });
 
 it('validate direct changes without transitions', function () {
@@ -28,11 +28,9 @@ describe('macros creation', function () {
 
     it('creates state machine getters', function () {
         expect(MacroableModels::modelHasMacro($this->model::class, 'status'))->toBe(true);
-        expect(MacroableModels::modelHasMacro($this->model::class, 'delivery_status'))->toBe(true);
         expect(MacroableModels::modelHasMacro($this->model::class, 'deliveryStatus'))->toBe(true);
 
         expect($this->model->status())->toBeInstanceOf(StateMachine::class);
-        expect($this->model->delivery_status())->toBeInstanceOf(StateMachine::class);
         expect($this->model->deliveryStatus())->toBeInstanceOf(StateMachine::class);
     });
 

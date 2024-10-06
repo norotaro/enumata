@@ -3,34 +3,25 @@
 namespace Norotaro\Enumata\Exceptions;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
+use Norotaro\Enumata\Contracts\StateMachine;
 use UnitEnum;
 
 class TransitionNotAllowedException extends Exception
 {
     public function __construct(
-        protected ?UnitEnum $from,
-        protected UnitEnum $to,
-        protected Model $model
+        ?UnitEnum $from,
+        UnitEnum $to,
+        StateMachine $stateMachine,
+        mixed $hasStateMachine
     ) {
-        $classname = get_class($model);
-        $message = "Transition from '$from?->name' to '$to->name' is not allowed for model '$classname'";
+        $message = sprintf(
+            'Transition from %s to %s is not allowed for %s in %s',
+            $from->value ?? $from->name ?? 'null',
+            $to->value ?? $to->name,
+            $stateMachine->getField(),
+            $hasStateMachine
+        );
 
         parent::__construct($message);
-    }
-
-    public function getFrom(): ?UnitEnum
-    {
-        return $this->from;
-    }
-
-    public function getTo(): UnitEnum
-    {
-        return $this->to;
-    }
-
-    public function getModel(): Model
-    {
-        return $this->model;
     }
 }
