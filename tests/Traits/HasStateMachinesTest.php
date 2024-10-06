@@ -14,7 +14,7 @@ it('set default state values', function () {
     $this->model->initEnumata(true);
 
     expect($this->model->status)->toBe(OrderStatus::Default);
-    expect($this->model->deliveryStatus)->toBe(null);
+    expect($this->model->delivery_status)->toBe(null);
 });
 
 it('validate direct changes without transitions', function () {
