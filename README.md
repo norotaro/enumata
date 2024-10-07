@@ -285,7 +285,7 @@ To access the State Machine we only need to add parentheses to the attribute nam
 $model->status(); // Norotaro\Enumata\StateMachine
 ```
 
-> If the attribute uses underscore such as `my_attribute`, you can access the state machine using `my_attribute()` or `myAttribute()`.
+> If the attribute uses underscore such as `my_attribute`, you can access the state machine using the camel case name of the attribute, `myAttribute()` in this case.
 
 ### Using the State Machine
 
