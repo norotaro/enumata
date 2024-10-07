@@ -1,7 +1,7 @@
 <?php
 
 use Norotaro\Enumata\Exceptions\TransitionNotAllowedException;
-use Norotaro\Enumata\StateMachine;
+use Norotaro\Enumata\EnumStateMachine;
 use Norotaro\Enumata\Tests\TestModels\Order;
 use Norotaro\Enumata\Tests\TestModels\OrderDeliveryStatus;
 use Norotaro\Enumata\Tests\TestModels\OrderStatus;
@@ -13,7 +13,7 @@ beforeEach(function () {
 
 describe('with not nullable status', function () {
     beforeEach(function () {
-        $this->stateMachine = new StateMachine($this->model, 'status');
+        $this->stateMachine = new EnumStateMachine($this->model, 'status');
     });
 
     it('returns the right current state', function () {
@@ -67,7 +67,7 @@ describe('with not nullable status', function () {
 
 describe('with nullable status', function () {
     beforeEach(function () {
-        $this->stateMachine = new StateMachine($this->model, 'delivery_status');
+        $this->stateMachine = new EnumStateMachine($this->model, 'delivery_status');
     });
 
     it('returns the right current state', function () {

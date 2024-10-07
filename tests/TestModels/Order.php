@@ -3,11 +3,12 @@
 namespace Norotaro\Enumata\Tests\TestModels;
 
 use Illuminate\Database\Eloquent\Model;
-use Norotaro\Enumata\Traits\HasStateMachines;
+use Norotaro\Enumata\Contracts\HasStateMachine;
+use Norotaro\Enumata\Traits\EloquentHasStateMachines;
 
-class Order extends Model
+class Order extends Model implements HasStateMachine
 {
-    use HasStateMachines;
+    use EloquentHasStateMachines;
 
     protected $casts = [
         'status'          => OrderStatus::class,

@@ -2,13 +2,10 @@
 
 namespace Norotaro\Enumata\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 interface StateMachine
 {
-    public function __construct(Model $model, string $field);
-
     /**
      * Return current state
      *
@@ -19,4 +16,8 @@ interface StateMachine
     public function canBe(DefineStates&UnitEnum $status): bool;
 
     public function transitionTo(DefineStates&UnitEnum $state, bool $force = false): void;
+
+    public function getField(): string;
+
+    public function isTransitioning(): bool;
 }
