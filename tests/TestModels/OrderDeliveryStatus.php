@@ -11,7 +11,7 @@ enum OrderDeliveryStatus implements DefineStates, Nullable
     case Pending;
     case Finished;
 
-    public function transitions(): array
+    public function transitions(): ?array
     {
         return match ($this) {
             self::Default => [
@@ -20,6 +20,7 @@ enum OrderDeliveryStatus implements DefineStates, Nullable
             self::Pending => [
                 'finish' => self::Finished,
             ],
+            default => null,
         };
     }
 
