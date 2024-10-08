@@ -60,6 +60,8 @@ trait EloquentHasStateMachines
                 $transitions = [];
             }
 
+            $transitions ??= [];
+
             if (in_array(Nullable::class, class_implements($state))) {
                 $transitions = [
                     ...$transitions,
