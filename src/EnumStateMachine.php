@@ -18,10 +18,7 @@ class EnumStateMachine implements Contracts\StateMachine
     ) {
     }
 
-    /**
-     * @return null|DefineStates&UnitEnum
-     */
-    public function currentState()
+    public function currentState(): null|(DefineStates&UnitEnum)
     {
         return $this->hasStateMachine->{$this->field};
     }

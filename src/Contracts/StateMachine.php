@@ -8,12 +8,7 @@ interface StateMachine
 {
     public function __construct(HasStateMachine $hasStateMachine, string $field);
 
-    /**
-     * Return current state
-     *
-     * @return null|DefineStates&UnitEnum
-     */
-    public function currentState();
+    public function currentState(): null|(DefineStates&UnitEnum);
 
     public function canBe(DefineStates&UnitEnum $status): bool;
 
