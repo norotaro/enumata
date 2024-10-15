@@ -8,8 +8,8 @@ use Illuminate\Events\QueuedClosure;
 use Javoscript\MacroableModels\Facades\MacroableModels;
 use Norotaro\Enumata\Contracts\DefineStates;
 use Norotaro\Enumata\Contracts\Nullable;
+use Norotaro\Enumata\Contracts\StateMachine;
 use Norotaro\Enumata\Exceptions\TransitionNotAllowedException;
-use Norotaro\Enumata\EnumStateMachine;
 use ReflectionEnum;
 
 trait EloquentHasStateMachines
@@ -85,7 +85,7 @@ trait EloquentHasStateMachines
     {
         $model->initEnumata(setDefaultValues: false);
 
-        /** @var EnumStateMachine $stateMachine */
+        /** @var StateMachine $stateMachine */
         foreach ($model->getStateMachines() as $stateMachine) {
             $field = $stateMachine->getField();
 
@@ -100,15 +100,7 @@ trait EloquentHasStateMachines
             $from = $model->getOriginal($field);
             $to = $model->{$field};
 
-            $transitions = $from?->transitions();
-
-            if (!$transitions && in_array(Nullable::class, class_implements($to))) {
-                $nullableState = $to;
-
-                $transitions = $nullableState->initialTransitions();
-            }
-
-            if (!in_array($to, $transitions ?? [])) {
+            if (!$stateMachine->canBe($to)) {
                 throw new TransitionNotAllowedException($from, $to, $stateMachine, self::class);
             }
         }
@@ -156,7 +148,10 @@ trait EloquentHasStateMachines
     protected function initStateMachineFor(string $field): void
     {
         if (!array_key_exists($field, $this->stateMachines)) {
-            $this->stateMachines[$field] = new EnumStateMachine($this, $field);
+            $this->stateMachines[$field] = app()->makeWith(StateMachine::class, [
+                'hasStateMachine' => $this,
+                'field' => $field,
+            ]);
         }
     }
 

@@ -6,6 +6,8 @@ use UnitEnum;
 
 interface StateMachine
 {
+    public function __construct(HasStateMachine $hasStateMachine, string $field);
+
     /**
      * Return current state
      *
