@@ -6,12 +6,9 @@ use UnitEnum;
 
 interface StateMachine
 {
-    /**
-     * Return current state
-     *
-     * @return null|DefineStates&UnitEnum
-     */
-    public function currentState();
+    public function __construct(HasStateMachine $hasStateMachine, string $field);
+
+    public function currentState(): null|(DefineStates&UnitEnum);
 
     public function canBe(DefineStates&UnitEnum $status): bool;
 
