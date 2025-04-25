@@ -30,13 +30,13 @@
   ],
   "require": {
     "php": "^8.2",
-    "illuminate/support": "^10.0|^11.0",
+    "illuminate/support": "^10.0|^11.0|^12.0",
     "javoscript/laravel-macroable-models": "^1.0"
   },
   "require-dev": {
     "laravel/pint": "^1.16",
-    "orchestra/testbench": "^7.0|^8.0|^9.1",
-    "pestphp/pest": "^2.34",
+    "orchestra/testbench": "^8.0|^9.1|^10.0",
+    "pestphp/pest": "^2.34|^3.0",
     "phpstan/phpstan": "^1.11"
   },
   "config": {
